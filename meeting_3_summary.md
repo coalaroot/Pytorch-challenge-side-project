@@ -1,10 +1,10 @@
-SUMMARY  
+### SUMMARY  
 Virtual Meetup 3 - Sunday, 2 December 2018  
 
-ATTENDEES:  
+### ATTENDEES:  
 @z0k, @gopalkrizna, @Anna po, @Samuel Cahyawijaya  
 
-HIGHLIGHTS OF DISCUSSION:  
+### HIGHLIGHTS OF DISCUSSION:
 1. We discussed Flask as a possible framework for implementing the Sign
    Language web app.  
 2. There are a number of possible approaches to consider for an end-to-end
