@@ -10,3 +10,6 @@ https://www.uow.edu.au/~wanqing/#Datasets
 *Sign language video dataset - 2742 signs with 3314 variants*  
 http://csr.bu.edu/asl/asllvd/annotate/index.html
 http://csr.bu.edu/asl/asllvd/annotate/session_1-2/index_session_1-2.html
+
+*Dataset for warm exercise*  
+https://github.com/ardamavi/Sign-Language-Digits-Dataset
