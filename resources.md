@@ -13,3 +13,10 @@ http://csr.bu.edu/asl/asllvd/annotate/session_1-2/index_session_1-2.html
 
 *Dataset for warm exercise*  
 https://github.com/ardamavi/Sign-Language-Digits-Dataset
+
+*VGG Hand Dataset with bounding box annotations*  
+http://www.robots.ox.ac.uk/~vgg/data/hands/
+
+*How to Build a Real-time Hand-Detector using Neural Networks (SSD) on
+Tensorflow*  
+https://towardsdatascience.com/how-to-build-a-real-time-hand-detector-using-neural-networks-ssd-on-tensorflow-d6bac0e4b2ce
