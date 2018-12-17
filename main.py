@@ -147,7 +147,7 @@ def manage_image_opr(frame, hand_hist):
                 in_data[-hand_img.shape[0]:,-hand_img.shape[1]:,:] = hand_img
 
                 # Draw Detected Hand Frame on Top Left Corner
-                # frame[:64,:64,:] = in_data
+                # frame[:64,-64:,:] = in_data
 
             ## Draw Bounding Box ##
             cv2.rectangle(frame,(p1[0] - 10, p1[1] - 10),(p2[0] + 10, p2[1] + 10),(0,255,0),2)
@@ -183,7 +183,7 @@ def draw_rect(frame):
 
 def main():
     # Init Video Capture
-    global hand_hist
+    global hand_hist, in_data
     is_hand_hist_created = False
     capture = cv2.VideoCapture(0)
 
@@ -215,12 +215,13 @@ def main():
         if step == 30:
             step = 0
 
-            global in_data
             if in_data is not None and is_hand_hist_created:
                 g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
-                x = torch.FloatTensor(g_img).view(1,1,64,64)
+                x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
                 with torch.no_grad():
-                    y_idx = F.softmax(model(x)).argmax().numpy()
+                    y = model(x)
+                    print(y)
+                    y_idx = F.softmax(y).argmax().numpy()
                     detection_result = label_dict[int(y_idx)]
             else:
                 detection_result = 'None'
@@ -228,6 +229,7 @@ def main():
         # Render to Screen
         if is_hand_hist_created:
             frame[:75,:180,:] = 0
+            frame[:64,-64:,:] = np.expand_dims(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY), axis=-1)
             cv2.putText(frame,'DETECTED',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
             cv2.putText(frame,'{}'.format(detection_result),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
