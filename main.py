@@ -1,5 +1,8 @@
 import cv2
 import numpy as np
+import torch
+import torch.nn.functional as F
+from model.net import Net
 
 hand_hist = None
 traverse_point = []
@@ -13,6 +16,19 @@ hand_rect_two_y = None
 min_size = 128 # Minimum eligible hand size, for removing false detected contour
 in_size = 64 # Size of resized image
 in_data = None # Buffer for input image of the model
+
+label_dict = {
+    0: 'NINE',
+    1: 'ZERO',
+    2: 'SEVEN',
+    3: 'SIX',
+    4: 'ONE',
+    5: 'EIGHT',
+    6: 'FOUR',
+    7: 'THREE',
+    8: 'TWO',
+    9: 'FIVE', 
+}
 
 # Rescale Image
 def rescale_frame(frame, wpercent=130, hpercent=130):
@@ -85,6 +101,8 @@ def hist_masking(frame, hist):
 
 # Detect Hand Image
 def manage_image_opr(frame, hand_hist):
+    global in_data, in_size, min_size
+
     ## Segmentation ##
     hist_mask_image = hist_masking(frame, hand_hist)
 
@@ -99,7 +117,6 @@ def manage_image_opr(frame, hand_hist):
         p2 = np.squeeze(hulls.max(axis=0))
 
         ## Measure Resize Shape ##
-        global in_data, in_size, min_size
         p1x = 0 if p1[1] - 10 < 0 else p1[1] - 10
         p1y = 0 if p1[0] - 10 < 0 else p1[0] - 10
         p2x = 0 if p2[1] + 10 < 0 else p2[1] + 10
@@ -126,15 +143,17 @@ def manage_image_opr(frame, hand_hist):
                 hand_img = cv2.resize(hand_img, (w_size, h_size))
                 
                 ## Pad Hand Image ##
-                in_data = np.zeros((in_size,in_size,3))
+                in_data = np.zeros((in_size,in_size,3), dtype = np.uint8)
                 in_data[-hand_img.shape[0]:,-hand_img.shape[1]:,:] = hand_img
 
                 # Draw Detected Hand Frame on Top Left Corner
-                frame[:64,:64,:] = in_data
+                # frame[:64,:64,:] = in_data
 
             ## Draw Bounding Box ##
             cv2.rectangle(frame,(p1[0] - 10, p1[1] - 10),(p2[0] + 10, p2[1] + 10),(0,255,0),2)
-
+    else:
+        # From Showing None Result
+        in_data = None
 
     return frame
 
@@ -163,9 +182,16 @@ def draw_rect(frame):
 
 
 def main():
+    # Init Video Capture
     global hand_hist
     is_hand_hist_created = False
     capture = cv2.VideoCapture(0)
+
+    # Init Model
+    model = Net()
+    model.load_state_dict(torch.load('./model/model_sl.pt', map_location=lambda storage, location: storage))
+    step = 0
+    detection_result = 'None'
 
     while capture.isOpened():
         pressed_key = cv2.waitKey(1)
@@ -183,6 +209,27 @@ def main():
             frame = manage_image_opr(frame, hand_hist)
         else:
             frame = draw_rect(frame)
+
+        # Perform Detection
+        step += 1
+        if step == 30:
+            step = 0
+
+            global in_data
+            if in_data is not None and is_hand_hist_created:
+                g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
+                x = torch.FloatTensor(g_img).view(1,1,64,64)
+                with torch.no_grad():
+                    y_idx = F.softmax(model(x)).argmax().numpy()
+                    detection_result = label_dict[int(y_idx)]
+            else:
+                detection_result = 'None'
+
+        # Render to Screen
+        if is_hand_hist_created:
+            frame[:75,:180,:] = 0
+            cv2.putText(frame,'DETECTED',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+            cv2.putText(frame,'{}'.format(detection_result),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
         cv2.imshow("FunTorch", rescale_frame(frame))
 
