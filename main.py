@@ -220,7 +220,6 @@ def main():
                 x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
                 with torch.no_grad():
                     y = model(x)
-                    print(y)
                     y_idx = F.softmax(y).argmax().numpy()
                     detection_result = label_dict[int(y_idx)]
             else:

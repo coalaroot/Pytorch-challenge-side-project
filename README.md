@@ -31,5 +31,7 @@ python main.py
 
 ### References
 [1] [Kaggle Example Script](https://www.kaggle.com/kumawatmanish/deep-learning-sign-language-dataset/code)
+
 [2] [Finger Detection](https://github.com/amarlearning/Finger-Detection-and-Tracking)
+
 [3] [Hand Detection](https://github.com/sashagaz/Hand_Detection)
