@@ -44,6 +44,7 @@ python collect_data.py
 - Press 0-9 on your keyboard to change active label
 - Press 'c' on your keyboard to capture a single data
 - Press 's' on you keyboard to save all the captured data into file, the file will be located in the current application as X_{datetime}.npy and Y_{datetime}.npy
+- Press 'd' on your keyboard to delete last recorded data
 - Press ESC button to exit the application
 
 Watch the example of adding new image data on https://youtu.be/lEJL5Xflwjo

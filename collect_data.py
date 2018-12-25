@@ -244,6 +244,10 @@ def main():
             detection_label = 8
         elif pressed_key & 0xFF == ord('9'):
             detection_label = 9
+        elif pressed_key & 0xFF == ord('r'):
+            if len(X_list) > 0:
+                del X_list[-1]
+                del Y_list[-1]
         elif pressed_key & 0xFF == ord('c'):
             if is_hand_hist_created:
                 X_list.append(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY))
