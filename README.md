@@ -7,7 +7,9 @@ A team of volunteers from PyTorch Scholarship Challenge from Facebook hosted by 
 
 ### File Description
 - main.py
-    - Entry point of the application
+    - Entry point of the application for detecting sign language gesture
+- collect_data.py
+    - Entry point of the application for creating new sign language data
 
 ### Setup
 Run the following command to install all required python packages
@@ -15,7 +17,7 @@ Run the following command to install all required python packages
 pip install -r requirements.txt
 ```
 
-### How to Use
+### How to Detect Gesture
 Run the following command to install all required python packages
 ```console
 python main.py
@@ -28,6 +30,23 @@ python main.py
 - Press ESC button to exit the application
 
 ![Hand](https://res.cloudinary.com/practicaldev/image/fetch/s--iIEtBPzW--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://thepracticaldev.s3.amazonaws.com/i/aaijxoqwmrkyx8epxq4t.png "Hand Histogram")
+
+### How to Add new image data
+See the sign language number gesture in https://github.com/ardamavi/Sign-Language-Digits-Dataset(https://github.com/ardamavi/Sign-Language-Digits-Dataset)
+
+Run the following command to install all required python packages
+```console
+python collect_data.py
+```
+
+##### Instructions
+- Press 'z' on your keyboard to start detecting hand
+- Press 0-9 on your keyboard to change active label
+- Press 'c' on your keyboard to capture a single data
+- Press 's' on you keyboard to save all the captured data into file, the file will be located in the current application as X_{datetime}.npy and Y_{datetime}.npy
+- Press ESC button to exit the application
+
+Watch the example of adding new image data on https://youtu.be/lEJL5Xflwjo
 
 ### References
 [1] [Kaggle Example Script](https://www.kaggle.com/kumawatmanish/deep-learning-sign-language-dataset/code)

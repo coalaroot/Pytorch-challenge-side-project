@@ -3,6 +3,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from model.net import Net
+import datetime
+import time
 
 hand_hist = None
 traverse_point = []
@@ -17,17 +19,30 @@ min_size = 128 # Minimum eligible hand size, for removing false detected contour
 in_size = 64 # Size of resized image
 in_data = None # Buffer for input image of the model
 
-label_dict = {
-    0: 'NINE',
-    1: 'ZERO',
-    2: 'SEVEN',
-    3: 'SIX',
-    4: 'ONE',
-    5: 'EIGHT',
-    6: 'FOUR',
-    7: 'THREE',
-    8: 'TWO',
-    9: 'FIVE', 
+label_to_label_index_dict = {
+    0: 1,
+    1: 4,
+    2: 8,
+    3: 7,
+    4: 6,
+    5: 9,
+    6: 3,
+    7: 2,
+    8: 5,
+    9: 0
+}
+
+label_index_to_label_dict = {
+    1:0,
+    4:1,
+    8:2,
+    7:3,
+    6:4,
+    9:5,
+    3:6,
+    2:7,
+    5:8,
+    0:9
 }
 
 # Rescale Image
@@ -124,8 +139,8 @@ def manage_image_opr(frame, hand_hist):
 
         # Check if max contour size is more than minimum size
         if p2x - p1x >= min_size or p2y - p2x >= min_size:
-            hand_img = hist_mask_image[p1x:p2x,p1y:p2y, :]
-            # hand_img = frame[p1x:p2x,p1y:p2y, :]
+            # hand_img = hist_mask_image[p1x:p2x,p1y:p2y, :]
+            hand_img = frame[p1x:p2x,p1y:p2y, :]
             if hand_img.shape[0] == 0 or hand_img.shape[1] == 0:
                 h_size = 0
                 w_size = 0
@@ -194,7 +209,9 @@ def main():
     model = Net()
     model.load_state_dict(torch.load('./model/model_sl.pt', map_location=lambda storage, location: storage))
     step = 0
-    detection_result = 'None'
+    detection_label = 0
+    X_list = []
+    Y_list = []
 
     while capture.isOpened():
         pressed_key = cv2.waitKey(1)
@@ -207,35 +224,61 @@ def main():
             else:
                 is_hand_hist_created = True
                 hand_hist = hand_histogram(frame)
+        elif pressed_key & 0xFF == ord('0'):
+            detection_label = 0
+        elif pressed_key & 0xFF == ord('1'):
+            detection_label = 1
+        elif pressed_key & 0xFF == ord('2'):
+            detection_label = 2
+        elif pressed_key & 0xFF == ord('3'):
+            detection_label = 3
+        elif pressed_key & 0xFF == ord('4'):
+            detection_label = 4
+        elif pressed_key & 0xFF == ord('5'):
+            detection_label = 5
+        elif pressed_key & 0xFF == ord('6'):
+            detection_label = 6
+        elif pressed_key & 0xFF == ord('7'):
+            detection_label = 7
+        elif pressed_key & 0xFF == ord('8'):
+            detection_label = 8
+        elif pressed_key & 0xFF == ord('9'):
+            detection_label = 9
+        elif pressed_key & 0xFF == ord('c'):
+            if is_hand_hist_created:
+                X_list.append(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY))
+                Y_list.append(label_to_label_index_dict[detection_label])
+        elif pressed_key & 0xFF == ord('s'):
+            if len(X_list) > 0:
+                sdatetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+
+                onehot_Y_buff = np.zeros((len(Y_list), 10))
+                onehot_Y_buff = np.zeros((len(Y_list), 10))
+                onehot_Y_buff[np.arange(len(Y_list)), Y_list] = 1
+
+                np.save(open('X_{}.npy'.format(sdatetime),'wb'), np.array(X_list))
+                np.save(open('Y_{}.npy'.format(sdatetime),'wb'), onehot_Y_buff)
+
+                time.sleep(2)
+
+        if len(X_list) > 0:
+            frame[:40,400:700,:] = 0
+            cv2.putText(frame,'LAST {} COUNT {}'.format(label_index_to_label_dict[Y_list[-1]], len(Y_list)),(415, 25), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+            frame[0:64,700:700+64,:] = np.expand_dims(X_list[-1], axis=-1)
 
         if is_hand_hist_created:
             frame = manage_image_opr(frame, hand_hist)
         else:
             frame = draw_rect(frame)
 
-        # Perform Detection
-        step += 1
-        if step == 30:
-            step = 0
-
-            if in_data is not None and is_hand_hist_created:
-                g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
-                x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
-                with torch.no_grad():
-                    y = model(x)
-                    y_idx = F.softmax(y, dim=-1).argmax().numpy()
-                    detection_result = label_dict[int(y_idx)]
-            else:
-                detection_result = 'None'
-
         # Render to Screen
-        if is_hand_hist_created:
-            frame[:75,:180,:] = 0
+        if is_hand_hist_created and in_data is not None:
+            frame[:75,:230,:] = 0
             frame[:64,-64:,:] = np.expand_dims(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY), axis=-1)
-            cv2.putText(frame,'DETECTED',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-            cv2.putText(frame,'{}'.format(detection_result),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+            cv2.putText(frame,'ACTIVE LABEL',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+            cv2.putText(frame,'{}'.format(detection_label),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
-        cv2.imshow("FunTorch", rescale_frame(frame))
+        cv2.imshow("FunTorch Data Collector", rescale_frame(frame))
 
         # Close if ESC pressed
         if pressed_key == 27:
