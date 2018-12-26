@@ -265,22 +265,22 @@ def main():
 
                 time.sleep(2)
 
-        if len(X_list) > 0:
-            frame[:40,400:700,:] = 0
-            cv2.putText(frame,'LAST {} COUNT {}'.format(label_index_to_label_dict[Y_list[-1]], len(Y_list)),(415, 25), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-            frame[0:64,700:700+64,:] = np.expand_dims(X_list[-1], axis=-1)
-
         if is_hand_hist_created:
             frame = manage_image_opr(frame, hand_hist)
         else:
             frame = draw_rect(frame)
 
+        frame[:30,:270,:] = 0
+        if len(X_list) > 0:
+            frame[:100,:270,:] = 0
+            cv2.putText(frame,'LAST LABEL : {}'.format(label_index_to_label_dict[Y_list[-1]]),(5, 65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+            cv2.putText(frame,'COUNT : {}'.format(len(Y_list)),(5, 95), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+            frame[36:36+64,270:270+64,:] = np.expand_dims(X_list[-1], axis=-1)
+        cv2.putText(frame,'LABEL : {}'.format(detection_label),(5,25), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+        
         # Render to Screen
         if is_hand_hist_created and in_data is not None:
-            frame[:75,:230,:] = 0
             frame[:64,-64:,:] = np.expand_dims(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY), axis=-1)
-            cv2.putText(frame,'ACTIVE LABEL',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-            cv2.putText(frame,'{}'.format(detection_label),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
         cv2.imshow("FunTorch Data Collector", rescale_frame(frame))
 
