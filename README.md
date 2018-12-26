@@ -32,7 +32,7 @@ python main.py
 ![Hand](https://res.cloudinary.com/practicaldev/image/fetch/s--iIEtBPzW--/c_limit%2Cf_auto%2Cfl_progressive%2Cq_auto%2Cw_880/https://thepracticaldev.s3.amazonaws.com/i/aaijxoqwmrkyx8epxq4t.png "Hand Histogram")
 
 ### How to Add new image data
-See the sign language number gesture in https://github.com/ardamavi/Sign-Language-Digits-Dataset(https://github.com/ardamavi/Sign-Language-Digits-Dataset)
+See the sign language number gesture in https://github.com/ardamavi/Sign-Language-Digits-Dataset
 
 Run the following command to install all required python packages
 ```console
