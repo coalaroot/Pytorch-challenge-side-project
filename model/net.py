@@ -29,7 +29,9 @@ class Net(nn.Module):
         self.conv4_2 = nn.Conv2d(64, 64, 3, padding=1)
         self.conv4_3 = nn.Conv2d(64, 64, 3, padding=1)
         
-        self.fc = nn.Linear(64, 10)
+        self.fc1 = nn.Linear(64, 64)
+        self.do = nn.Dropout(p=0.35)
+        self.fc2 = nn.Linear(64, 10)
         
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -60,6 +62,8 @@ class Net(nn.Module):
         x = F.relu(self.conv4_1(x))
         x = F.relu(self.conv4_2(x))
         x = F.relu(self.conv4_3(x))
-        x = F.log_softmax(self.fc(x.view(-1, 64, 8*8).sum(dim=-1)), dim=-1)
+
+        x = self.do(self.fc1(x.view(-1, 64, 8*8).sum(dim=-1)))
+        x = F.log_softmax(self.fc2(x), dim=-1)
 
         return x
