@@ -125,8 +125,8 @@ def manage_image_opr(frame, hand_hist):
 
         # Check if max contour size is more than minimum size
         if p2x - p1x >= min_size or p2y - p2x >= min_size:
-            hand_img = hist_mask_image[p1x:p2x,p1y:p2y, :]
-            # hand_img = frame[p1x:p2x,p1y:p2y, :]
+            # hand_img = hist_mask_image[p1x:p2x,p1y:p2y, :]
+            hand_img = frame[p1x:p2x,p1y:p2y, :]
             if hand_img.shape[0] == 0 or hand_img.shape[1] == 0:
                 h_size = 0
                 w_size = 0
