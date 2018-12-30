@@ -64,6 +64,9 @@ for i in range(len(X_filenames)):
         Y = np.concatenate((Y, new_Y), axis=0)
 
     labels = np.argmax(new_Y, axis=1)
+    if X.max() > 1:
+        X = X / 255
+
     for i in range(len(labels)):
         labels[i] = label_index_to_label_dict[labels[i]]
     print(pd.DataFrame({'label':labels}).groupby('label')['label'].count())

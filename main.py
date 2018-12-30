@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
+from torchvision import transforms
 from model.net import Net
 
 hand_hist = None
@@ -124,8 +125,8 @@ def manage_image_opr(frame, hand_hist):
 
         # Check if max contour size is more than minimum size
         if p2x - p1x >= min_size or p2y - p2x >= min_size:
-            # hand_img = hist_mask_image[p1x:p2x,p1y:p2y, :]
-            hand_img = frame[p1x:p2x,p1y:p2y, :]
+            hand_img = hist_mask_image[p1x:p2x,p1y:p2y, :]
+            # hand_img = frame[p1x:p2x,p1y:p2y, :]
             if hand_img.shape[0] == 0 or hand_img.shape[1] == 0:
                 h_size = 0
                 w_size = 0
@@ -192,7 +193,9 @@ def main():
 
     # Init Model
     model = Net()
-    model.load_state_dict(torch.load('./model/model_sl.pt', map_location=lambda storage, location: storage))
+    model.load_state_dict(torch.load('./model/model_sl_3968.pt', map_location=lambda storage, location: storage))
+    model.eval()
+
     step = 0
     detection_result = 'None'
 
@@ -215,15 +218,19 @@ def main():
 
         # Perform Detection
         step += 1
-        if step == 30:
+        if step == 5:
             step = 0
 
             if in_data is not None and is_hand_hist_created:
                 g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
+                print(g_img.sum())
                 x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
+                x = (x - 0.5) / 0.5
+
                 with torch.no_grad():
                     y = model(x)
                     y_idx = F.softmax(y, dim=-1).argmax().numpy()
+                    print(y_idx, label_dict[int(y_idx)], F.softmax(y, dim=-1))
                     detection_result = label_dict[int(y_idx)]
             else:
                 detection_result = 'None'
