@@ -31,15 +31,15 @@ class Net(nn.Module):
         self.conv4_2 = nn.Conv2d(128, 192, 3, padding=1)
         self.conv4_3 = nn.Conv2d(192, 256, 3, padding=1)
         
-        self.fc1 = nn.Linear(256, 256, bias=False)
+        self.fc1 = nn.Linear(256, 1024)
         self.do = nn.Dropout(p=0.25)
-        self.fc2 = nn.Linear(256, 10, bias=False)
+        self.fc2 = nn.Linear(1024, 10)
         
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, nn.Linear):
-                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                nn.init.kaiming_normal_(m.weight, mode='fan_in', nonlinearity='relu')
 
     def forward(self, x):
         # 64x64x1 => 32x32x8
@@ -58,15 +58,15 @@ class Net(nn.Module):
         x = F.relu(self.conv3_1(x))
         x = F.relu(self.conv3_2(x))
         x = F.relu(self.conv3_3(x))
-        x = self.do2d(F.relu(self.pool3(x)))
+        x = F.relu(self.pool3(x))
         
         # 8x8x32 => 8x8x10
         x = F.relu(self.conv4_1(x))
         x = F.relu(self.conv4_2(x))
-        x = F.relu(self.conv4_3(x))
+        x = self.do2d(F.relu(self.conv4_3(x)))
 
         x = x.view(-1, 256, 8*8).sum(dim=-1)
         x = self.do(F.relu(self.fc1(x)))
-        x = F.log_softmax(self.fc2(x), dim=-1)
+        x = self.fc2(x)
 
         return x
