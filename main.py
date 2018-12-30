@@ -223,7 +223,6 @@ def main():
 
             if in_data is not None and is_hand_hist_created:
                 g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
-                print(g_img.sum())
                 x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
                 x = (x - 0.5) / 0.5
 
