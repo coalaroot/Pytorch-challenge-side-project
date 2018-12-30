@@ -229,7 +229,7 @@ def main():
                 detection_result = 'None'
 
         # Render to Screen
-        if is_hand_hist_created:
+        if is_hand_hist_created and in_data is not None:
             frame[:75,:180,:] = 0
             frame[:64,-64:,:] = np.expand_dims(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY), axis=-1)
             cv2.putText(frame,'DETECTED',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
