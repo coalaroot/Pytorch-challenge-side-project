@@ -257,7 +257,6 @@ def main():
                 sdatetime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
 
                 onehot_Y_buff = np.zeros((len(Y_list), 10))
-                onehot_Y_buff = np.zeros((len(Y_list), 10))
                 onehot_Y_buff[np.arange(len(Y_list)), Y_list] = 1
 
                 np.save(open('X_{}.npy'.format(sdatetime),'wb'), np.array(X_list))
