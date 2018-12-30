@@ -53,6 +53,9 @@ for i in range(len(X_filenames)):
     print('new_X.shape', new_X.shape)
     print('new_Y.shape', new_Y.shape)
 
+    if new_X.max() > 1:
+        new_X = new_X.astype(float) / 255
+        
     if X is None:
         X = new_X
     else:
@@ -64,8 +67,6 @@ for i in range(len(X_filenames)):
         Y = np.concatenate((Y, new_Y), axis=0)
 
     labels = np.argmax(new_Y, axis=1)
-    if X.max() > 1:
-        X = X / 255
 
     for i in range(len(labels)):
         labels[i] = label_index_to_label_dict[labels[i]]
