@@ -54,7 +54,7 @@ for i in range(len(X_filenames)):
     print('new_Y.shape', new_Y.shape)
 
     if new_X.max() > 1:
-        new_X = new_X.astype(float) / 255
+        new_X = (new_X / 255).astype(np.float32)
         
     if X is None:
         X = new_X
