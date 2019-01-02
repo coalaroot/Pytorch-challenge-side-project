@@ -229,7 +229,7 @@ def main():
                 with torch.no_grad():
                     y = model(x)
                     y_idx = F.softmax(y, dim=-1).argmax().numpy()
-                    print(y_idx, label_dict[int(y_idx)], F.softmax(y, dim=-1))
+                    # print(y_idx, label_dict[int(y_idx)], F.softmax(y, dim=-1))
                     detection_result = label_dict[int(y_idx)]
             else:
                 detection_result = 'None'
