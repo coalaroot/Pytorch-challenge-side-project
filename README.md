@@ -55,3 +55,6 @@ Watch the example of adding new image data on https://youtu.be/lEJL5Xflwjo
 [2] [Finger Detection](https://github.com/amarlearning/Finger-Detection-and-Tracking)
 
 [3] [Hand Detection](https://github.com/sashagaz/Hand_Detection)
+
+### Notes
+We also have a sign language recognition for android application. Please check our repository on https://github.com/forfireonly/SignLanguage
