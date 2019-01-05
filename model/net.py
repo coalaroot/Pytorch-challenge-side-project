@@ -11,21 +11,21 @@ class Net(nn.Module):
         
         self.conv1_1 = nn.Conv2d(1, 8, 3, padding=1)      
         self.conv1_2 = nn.Conv2d(8, 16, 3, padding=1)      
-        self.conv1_3 = nn.Conv2d(16, 24, 3, padding=1)
+        self.conv1_3 = nn.Conv2d(16, 32, 3, padding=1)
         
-        self.pool1 = nn.Conv2d(24, 32, 3, padding=1, stride=2) 
+        self.pool1 = nn.MaxPool2d(2) 
         
         self.conv2_1 = nn.Conv2d(32, 40, 3, padding=1)      
         self.conv2_2 = nn.Conv2d(40, 48, 3, padding=1)      
-        self.conv2_3 = nn.Conv2d(48, 56, 3, padding=1)
+        self.conv2_3 = nn.Conv2d(48, 64, 3, padding=1)
 
-        self.pool2 = nn.Conv2d(56, 64, 3, padding=1, stride=2)
+        self.pool2 = nn.MaxPool2d(2) 
         
         self.conv3_1 = nn.Conv2d(64, 72, 3, padding=1)      
         self.conv3_2 = nn.Conv2d(72, 80, 3, padding=1)      
-        self.conv3_3 = nn.Conv2d(80, 88, 3, padding=1)
+        self.conv3_3 = nn.Conv2d(80, 96, 3, padding=1)
         
-        self.pool3 = nn.Conv2d(88, 96, 3, padding=1, stride=2)
+        self.pool3 = nn.MaxPool2d(2) 
         
         self.conv4_1 = nn.Conv2d(96, 128, 3, padding=1)      
         self.conv4_2 = nn.Conv2d(128, 192, 3, padding=1)
@@ -46,19 +46,19 @@ class Net(nn.Module):
         x = F.relu(self.conv1_1(x))
         x = F.relu(self.conv1_2(x))
         x = F.relu(self.conv1_3(x))
-        x = F.relu(self.pool1(x))
+        x = self.pool1(x)
         
         # 32x32x8 => 16x16x16
         x = F.relu(self.conv2_1(x))
         x = F.relu(self.conv2_2(x))
         x = F.relu(self.conv2_3(x))
-        x = F.relu(self.pool2(x))
+        x = self.pool2(x)
         
         # 16x16x16 => 8x8x32
         x = F.relu(self.conv3_1(x))
         x = F.relu(self.conv3_2(x))
         x = F.relu(self.conv3_3(x))
-        x = F.relu(self.pool3(x))
+        x = self.pool3(x)
         
         # 8x8x32 => 8x8x10
         x = F.relu(self.conv4_1(x))

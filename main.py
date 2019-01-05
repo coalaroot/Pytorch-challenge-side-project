@@ -186,6 +186,9 @@ def draw_rect(frame):
 
 
 def main():
+    # Init running label
+    last_10_detection = np.zeros(10)
+
     # Init Video Capture
     global hand_hist, in_data
     is_hand_hist_created = False
@@ -193,7 +196,7 @@ def main():
 
     # Init Model
     model = Net()
-    model.load_state_dict(torch.load('./model/model_sl_3968.pt', map_location=lambda storage, location: storage))
+    model.load_state_dict(torch.load('sl_model.pt', map_location=lambda storage, location: storage))
     model.eval()
 
     step = 0
@@ -211,35 +214,41 @@ def main():
                 is_hand_hist_created = True
                 hand_hist = hand_histogram(frame)
 
+                # Reinit running label
+                last_10_detection = np.zeros(10)
+
         if is_hand_hist_created:
             frame = manage_image_opr(frame, hand_hist)
         else:
             frame = draw_rect(frame)
 
         # Perform Detection
-        step += 1
-        if step == 5:
-            step = 0
+        if in_data is not None and is_hand_hist_created:
+            g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
+            x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
+            x = (x - 0.5) / 0.5
 
-            if in_data is not None and is_hand_hist_created:
-                g_img = cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY)
-                x = torch.FloatTensor(g_img).view(1,1,64,64) / 255
-                x = (x - 0.5) / 0.5
+            with torch.no_grad():
+                y = model(x)
+                y_idx = F.softmax(y, dim=-1).argmax().numpy()
 
-                with torch.no_grad():
-                    y = model(x)
-                    y_idx = F.softmax(y, dim=-1).argmax().numpy()
-                    # print(y_idx, label_dict[int(y_idx)], F.softmax(y, dim=-1))
-                    detection_result = label_dict[int(y_idx)]
-            else:
-                detection_result = 'None'
+                # Update likelihood
+                last_10_detection[y_idx] += 2
+                last_10_detection = last_10_detection - 1
+                last_10_detection = np.clip(last_10_detection, 0, 8)
+
+                # print(y_idx, label_dict[int(y_idx)], F.softmax(y, dim=-1))
+                detection_result = label_dict[int(np.argmax(last_10_detection))]
+        else:
+            detection_result = 'None'
 
         # Render to Screen
-        if is_hand_hist_created and in_data is not None:
-            frame[:75,:180,:] = 0
-            frame[:64,-64:,:] = np.expand_dims(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY), axis=-1)
-            cv2.putText(frame,'DETECTED',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
-            cv2.putText(frame,'{}'.format(detection_result),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+        if is_hand_hist_created :
+            if in_data is not None:
+                frame[:75,:180,:] = 0
+                frame[:64,-64:,:] = np.expand_dims(cv2.cvtColor(in_data, cv2.COLOR_BGR2GRAY), axis=-1)
+                cv2.putText(frame,'DETECTED',(5,30), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
+                cv2.putText(frame,'{}'.format(detection_result),(5,65), cv2.FONT_HERSHEY_DUPLEX, 1, (255,255,255), 1, cv2.LINE_AA)
 
         cv2.imshow("FunTorch", rescale_frame(frame))
 
