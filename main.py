@@ -196,7 +196,7 @@ def main():
 
     # Init Model
     model = Net()
-    model.load_state_dict(torch.load('sl_model.pt', map_location=lambda storage, location: storage))
+    model.load_state_dict(torch.load('./model/model_sl_3968.pt', map_location=lambda storage, location: storage))
     model.eval()
 
     step = 0

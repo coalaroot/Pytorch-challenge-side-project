@@ -11,7 +11,7 @@ APP = ['main.py']
 DATA_FILES = ['sl_model.pt']
 OPTIONS = {
     'argv_emulation': True,
-    'packages': ['torch', 'torchvision', 'numpy', 'opencv']
+    'packages': ['torch', 'torchvision', 'numpy', 'cv2']
 }
 
 setup(
