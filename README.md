@@ -58,3 +58,25 @@ Watch the example of adding new image data on https://youtu.be/lEJL5Xflwjo
 
 ### Notes
 We also developed a sign language interpretation android application. Please check our repository on https://github.com/forfireonly/SignLanguage
+
+### More about our project
+- Pitch Deck
+    https://goo.gl/Wr9qCF
+
+- Landing Page
+    https://mariannajan.github.io/funtorchSignLanguage/
+
+- Introduction Video
+    https://goo.gl/Rz96JJ
+
+- Demo Desktop Application
+    https://youtu.be/AvHXbdcuj8M
+
+- MacOS Application
+    https://goo.gl/XaJgSu
+
+- Windows Application
+    http://bit.ly/funtorch_win64
+
+- Mobile Application
+    https://goo.gl/9oHJhG
