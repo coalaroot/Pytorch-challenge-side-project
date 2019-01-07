@@ -1,4 +1,4 @@
-# [Funtorch] Sign Language Recognition
+# [Funtorch] Sign Language Interpretation
 
 A team of volunteers from PyTorch Scholarship Challenge from Facebook hosted by Udacity creating awesome Deep Learning models.
 
@@ -57,4 +57,4 @@ Watch the example of adding new image data on https://youtu.be/lEJL5Xflwjo
 [3] [Hand Detection](https://github.com/sashagaz/Hand_Detection)
 
 ### Notes
-We also have a sign language recognition for android application. Please check our repository on https://github.com/forfireonly/SignLanguage
+We also developed a sign language interpretation android application. Please check our repository on https://github.com/forfireonly/SignLanguage

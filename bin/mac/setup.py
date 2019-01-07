@@ -11,6 +11,7 @@ APP = ['main.py']
 DATA_FILES = ['sl_model.pt']
 OPTIONS = {
     'argv_emulation': True,
+    'iconfile':'icon.icns',
     'packages': ['torch', 'torchvision', 'numpy', 'cv2']
 }
 
