@@ -1,6 +1,6 @@
-# [Funtorch] Sign Language Interpretation
+# Real-time Sign Language Interpreter
 
-A team of volunteers from PyTorch Scholarship Challenge from Facebook hosted by Udacity creating awesome Deep Learning models.
+We are a team of volunteers from PyTorch Scholarship Challenge from Facebook hosted by Udacity creating awesome Deep Learning models.
 
 ### Dataset
 [Sign Language Dataset](https://www.kaggle.com/kumawatmanish/deep-learning-sign-language-dataset/data)
